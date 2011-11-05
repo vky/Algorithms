@@ -6,16 +6,16 @@
 
 // Global variables, will be used by multiple functions.
 //const int INPUT_SIZE = 20;
-const int INPUT_SIZE = 10000;
-//const int INPUT_SIZE = 100000;
+//const int INPUT_SIZE = 10000;
+const int INPUT_SIZE = 100000;
 int increasing[INPUT_SIZE];
 int decreasing[INPUT_SIZE];
 int random[INPUT_SIZE];
 
+
 SYSTEMTIME start, end;
 
 
-// Print the time taken based off of time before and after a function call.
 template<class T>	// Useful for testing with INPUT_SIZE = 20
 void print_array(T input[])	{
 	for(int i = 0; i<INPUT_SIZE; i++)	{
@@ -57,6 +57,7 @@ void reset_arrays()	{
 		random[i] = rand() % 10000;
 	}
 }
+// Print the time taken based off of time before and after a function call.
 void print_performance(std::string testTitle)	{
 	printf("\nThe start time was: %02d:%04d:%04d\n", start.wMinute, 
 		start.wSecond, start.wMilliseconds);

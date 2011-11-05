@@ -1,6 +1,19 @@
 #ifndef MY_SORTING_H
 #define MY_SORTING_H
 #include "helper.h"
+template<class T>
+bool is_sorted_b(T input[])	{
+	bool sorted = true;
+
+	for ( int z = 0; z < INPUT_SIZE-1; z++ )	{
+		if (input[z] > input[z+1])	{
+			sorted = false;
+			return sorted;
+		}
+	}
+	
+	return sorted;
+}
 
 // Sorting methods
 void insertion(int* input)	{
@@ -17,6 +30,9 @@ void insertion(int* input)	{
 	}
 }
 void selection(int* input){
+	if ( is_sorted_b(input) )
+		return;
+
 	int smallest	= input[0];
 	int temp		= 0;
 	for(int pos = 0; pos < INPUT_SIZE; pos++)	{
