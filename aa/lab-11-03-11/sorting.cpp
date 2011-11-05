@@ -27,20 +27,3 @@ int main()	{
 
 	return 0;
 }
-
-/* // Can this be done?
-void test_sort(func function, (array1, arrayTitle1), (array2, arrayTitle2)
-		(array3, arrayTitle3))	{
-
-	map	{		// for each tuple, do the following with the given function.
-		reset_arrays();
-
-		GetLocalTime(&start);
-		function(array);
-		print_performance(arrayTitle);
-		is_sorted(array, arrayTitle);
-		GetLocalTime(&end);
-	}
-
-}
-*/
