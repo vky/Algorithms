@@ -1,5 +1,6 @@
-#ifndef MY_SORTING_H
-#define MY_SORTING_H
+#ifndef FUNCTOR_SORTS_H
+#define FUNCTOR_SORTS_H
+
 #include "helper.h"
 
 
@@ -53,9 +54,6 @@ void selection(int* input){
 			input[smallest] = temp;
 		}
 	}
-}
-void quick(int* array)	{
-
 }
 
 #endif
