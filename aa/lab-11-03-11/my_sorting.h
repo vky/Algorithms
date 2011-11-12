@@ -1,6 +1,6 @@
 #ifndef MY_SORTING_H
 #define MY_SORTING_H
-#include "helper.h"
+//#include "helper.h"
 
 
 template<class T>
@@ -54,6 +54,8 @@ void selection(int* input){
 		}
 	}
 }
+
+
 void quick(int* array)	{
 
 }
