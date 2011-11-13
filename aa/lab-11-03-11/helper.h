@@ -5,9 +5,9 @@
 #include <string>
 
 // Global variables, will be used by multiple functions.
-//const int INPUT_SIZE = 20;
+const int INPUT_SIZE = 20;
 //const int INPUT_SIZE = 10000;
-const int INPUT_SIZE = 100000;
+//const int INPUT_SIZE = 100000;
 int increasing[INPUT_SIZE];
 int decreasing[INPUT_SIZE];
 int random[INPUT_SIZE];

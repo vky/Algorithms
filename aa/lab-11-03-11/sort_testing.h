@@ -51,19 +51,45 @@ void test_quick()	{
 	reset_arrays();
 
 	GetLocalTime(&start);
-	quick(increasing);
+	quick(increasing, 1, INPUT_SIZE-1);
 	GetLocalTime(&end);
 	print_performance("Quick Sort-Increasing");
+	is_sorted(increasing, "Quick Sort-Increasing");
 
 	GetLocalTime(&start);
-	quick(decreasing);
+	quick(decreasing, 0, INPUT_SIZE);
 	GetLocalTime(&end);
 	print_performance("Quick Sort-Decreasing");
+	is_sorted(decreasing, "Quick Sort-Decreasing");
 
 	GetLocalTime(&start);
-	quick(random);
+	quick(random, 0, INPUT_SIZE-1);
 	GetLocalTime(&end);
 	print_performance("Quick Sort-Random");
+	is_sorted(random, "Quick Sort-Random");
+}
+
+void test_tail_quick()	{
+	reset_arrays();
+
+	GetLocalTime(&start);
+	tail_quick(increasing, 0, INPUT_SIZE-1);
+	GetLocalTime(&end);
+	print_performance("Quick Sort-Increasing");
+	is_sorted(increasing, "Quick Sort-Increasing");
+
+	GetLocalTime(&start);
+	tail_quick(decreasing, 0, INPUT_SIZE-1);
+	GetLocalTime(&end);
+	print_performance("Quick Sort-Decreasing");
+	is_sorted(decreasing, "Quick Sort-Decreasing");
+
+	GetLocalTime(&start);
+	tail_quick(random, 0, INPUT_SIZE-1);
+	GetLocalTime(&end);
+	print_performance("Quick Sort-Random");
+	is_sorted(random, "Quick Sort-Random");
+	
 }
 
 // Testing functions for template sorting methods
