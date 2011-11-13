@@ -99,34 +99,53 @@ bool is_sorted_b(T input[])	{
 	return sorted;
 }
 
-struct f_selection	{
-	template<class T>
-	void operator()(T* input){
-		if ( is_sorted_b(input) )
-			return;
 
-		T smallest	= input[0];
-		int temp		= 0;
-		for(T pos = 0; pos < INPUT_SIZE; pos++)	{
-			smallest = pos;
-			// Finding the smallest number
-			for (T i = pos+1; i < INPUT_SIZE; i++)	{
-				if (input[i] < input[smallest])	{
-					smallest = i;
+// Sorting methods
+struct F	{
+	struct insertion	{
+		template<class T>
+		void operator()(T* input){
+			for ( T j=1; j < INPUT_SIZE; j++ )	{
+				T key = input[j];
+				T i = j-1;
+
+				while ( i>=0 && input[i] > key )	{
+					input[i+1] = input[i];
+					i = i-1;
 				}
-			}
 
-			// Swapping
-			if (smallest != pos)	{
-				temp = input[pos];
-				input[pos] = input[smallest];
-				input[smallest] = temp;
+				input[i+1] = key;
 			}
 		}
-	}
+	};
+
+	struct selection	{
+		template<class T>
+		void operator()(T* input){
+			if ( is_sorted_b(input) )
+				return;
+
+			T smallest	= input[0];
+			int temp		= 0;
+			for(T pos = 0; pos < INPUT_SIZE; pos++)	{
+				smallest = pos;
+				// Finding the smallest number
+				for (T i = pos+1; i < INPUT_SIZE; i++)	{
+					if (input[i] < input[smallest])	{
+						smallest = i;
+					}
+				}
+
+				// Swapping
+				if (smallest != pos)	{
+					temp = input[pos];
+					input[pos] = input[smallest];
+					input[smallest] = temp;
+				}
+			}
+		}
+	};
 };
-
-
 void print_title(tuple<int*,string> someCase)	{
 	print_array(get<0>(someCase));
 	cout << get<1>(someCase) << endl;
@@ -146,17 +165,33 @@ struct test_sort	{
 	}
 };
 
+
+struct test_all	{
+	template<class S, class T, >
+	void operator()(vector<tuple<S, string>> sorts, vector<tuple<T*, string>> tests)	{
+		test_sort test_func;
+		reset_arrays();
+		// Loop through each sorting function in 'sorts' vector
+		for (auto inputFunc = sorts.begin(); inputFunc != sorts.end(); ++inputFunc)	{
+			// Loop through all the test cases in the 'tests' vector
+			for (auto inputCase = tests.begin(); inputCase != tests.end(); ++inputCase)	{
+				test_func(get<0>(*inputFunc), get<1>(*inputFunc), *inputCase);
+			}
+		}
+	}
+};
+
 int main()	{
 	srand ( time(NULL) );
 
 	reset_arrays();
 	
-	// Create tuples of the various test cases
+	// Create tuples of the various test cases.
+	// These could also be written as follows:
+	//		auto case_increasing = make_tuple(increasing, "Increasing");
 	tuple<int*, string> case_increasing(increasing, "Increasing");
 	tuple<int*, string> case_decreasing(decreasing, "Decreasing");
 	tuple<int*, string> case_random(random, "Random");
-	// These could also be written as follows:
-	//		auto case_increasing = make_tuple(increasing, "Increasing");
 
 	// Create vector that holds all of the test case tuples
 	vector<tuple<int*, string>> testCases;
@@ -164,17 +199,31 @@ int main()	{
 	testCases.push_back(case_decreasing);
 	testCases.push_back(case_random);
 
-	//for_each(testCases.begin(),testCases.end(), print_title);
 
-	test_sort someTest;
-	f_selection selection_sort;
-//	someTest(selection_sort, "Selection", testCases[1]);
+	// Declare testing functor
+	//test_sort test_function;
+	test_all uber_wtf;
+
+	// Declare sort functors for each sorting function
+	F::selection selection;
+	F::insertion insertion;
+
+	vector<tuple<void (F::*), string>> wtf;
+	wtf.push_back(selection, "Selection");
+	wtf.push_back(insertion, "Insertion");
 	
-	for (auto i = testCases.begin(); i != testCases.end(); ++i)	{
-		someTest(selection_sort, "Selection", *i);
+	uber_wtf(wtf, testCases);
+	
+	
+	
+	/*
+	// While this code is simplified... 
+	//		It looks somewhat cryptic, doesn't it?
+	for (auto inputCase = testCases.begin(); inputCase != testCases.end(); ++inputCase)	{
+		test_function(selection_sort, "Selection", *inputCase);
 	}
 
-	/*
+	
 	std::cout << "Time tracking is done in minutes:seconds:milliseconds."
 		<< std::endl;
 	 
