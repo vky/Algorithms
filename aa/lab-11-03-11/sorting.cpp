@@ -11,12 +11,15 @@
 #include <vector>
 #include <tuple>
 #include <algorithm>
+#include <functional>
+
+#include "my_sorting.h"
 using namespace std;
 
 // Global variables, will be used by multiple functions.
 //const int INPUT_SIZE = 20;
-//const int INPUT_SIZE = 10000;
-const int INPUT_SIZE = 100000;
+const int INPUT_SIZE = 10000;
+//const int INPUT_SIZE = 100000;
 int increasing[INPUT_SIZE];
 int decreasing[INPUT_SIZE];
 int random[INPUT_SIZE];
@@ -25,6 +28,7 @@ int random[INPUT_SIZE];
 SYSTEMTIME start_t, end_t;
 
 
+// Helper Functions
 template<class T>	// Useful for testing with INPUT_SIZE = 20
 void print_array(T input[])	{
 	for(int i = 0; i<INPUT_SIZE; i++)	{
@@ -77,83 +81,10 @@ void print_performance(std::string testTitle)	{
 		start_t.wSecond, end_t.wMilliseconds - start_t.wMilliseconds);
 }
 
-template<class T>	// Useful for testing with INPUT_SIZE = 20
-void mod_array(T input[])	{
-	for(int i = 0; i<INPUT_SIZE; i++)	{
-		input[i] += 10;
-	}
-}
 
-
-template<class T>
-bool is_sorted_b(T input[])	{
-	bool sorted = true;
-
-	for ( int z = 0; z < INPUT_SIZE-1; z++ )	{
-		if (input[z] > input[z+1])	{
-			sorted = false;
-			return sorted;
-		}
-	}
-	
-	return sorted;
-}
-
-
-// Sorting methods
-struct F	{
-	struct insertion	{
-		template<class T>
-		void operator()(T* input){
-			for ( T j=1; j < INPUT_SIZE; j++ )	{
-				T key = input[j];
-				T i = j-1;
-
-				while ( i>=0 && input[i] > key )	{
-					input[i+1] = input[i];
-					i = i-1;
-				}
-
-				input[i+1] = key;
-			}
-		}
-	};
-
-	struct selection	{
-		template<class T>
-		void operator()(T* input){
-			if ( is_sorted_b(input) )
-				return;
-
-			T smallest	= input[0];
-			int temp		= 0;
-			for(T pos = 0; pos < INPUT_SIZE; pos++)	{
-				smallest = pos;
-				// Finding the smallest number
-				for (T i = pos+1; i < INPUT_SIZE; i++)	{
-					if (input[i] < input[smallest])	{
-						smallest = i;
-					}
-				}
-
-				// Swapping
-				if (smallest != pos)	{
-					temp = input[pos];
-					input[pos] = input[smallest];
-					input[smallest] = temp;
-				}
-			}
-		}
-	};
-};
-void print_title(tuple<int*,string> someCase)	{
-	print_array(get<0>(someCase));
-	cout << get<1>(someCase) << endl;
-	mod_array(get<0>(someCase));
-	print_array(get<0>(someCase));
-}
-
-struct test_sort	{
+// Testing functions, requires Sorting functions to be function objects that
+// take an array as input.
+struct test_single_sort	{
 	template<class S, class T>
 	void operator()(S func, string funcTitle, tuple<T*, string> testCase)	{
 		GetLocalTime(&start_t);
@@ -161,25 +92,27 @@ struct test_sort	{
 		GetLocalTime(&end_t);
 		string something = funcTitle +"-"+ get<1>(testCase);
 		print_performance(something);
-		is_sorted(increasing, something);
+		is_sorted(get<0>(testCase), something);
 	}
 };
-
-
 struct test_all	{
-	template<class S, class T, >
-	void operator()(vector<tuple<S, string>> sorts, vector<tuple<T*, string>> tests)	{
-		test_sort test_func;
-		reset_arrays();
+	template<class T>
+	void operator()(vector<tuple<function<void(int*)>, string>> sorts, 
+					vector<tuple<T*, string>> tests)	{
+		test_single_sort test_func;		
 		// Loop through each sorting function in 'sorts' vector
 		for (auto inputFunc = sorts.begin(); inputFunc != sorts.end(); ++inputFunc)	{
+			// Reset the arrays after each function
+			reset_arrays();
 			// Loop through all the test cases in the 'tests' vector
-			for (auto inputCase = tests.begin(); inputCase != tests.end(); ++inputCase)	{
+			for (auto inputCase = tests.begin(); inputCase != tests.end(); ++inputCase)	
+			{
 				test_func(get<0>(*inputFunc), get<1>(*inputFunc), *inputCase);
 			}
 		}
 	}
 };
+
 
 int main()	{
 	srand ( time(NULL) );
@@ -199,48 +132,23 @@ int main()	{
 	testCases.push_back(case_decreasing);
 	testCases.push_back(case_random);
 
+	// Create tuples of sorting functions to be tested.
+	selection s_selection;
+	insertion s_insertion;
+	tuple<function<void(int*)>, string> selection_tuple(s_selection, 
+		"Selection");
+	tuple<function<void(int*)>, string> insertion_tuple(s_insertion, 
+		"Insertion");
 
-	// Declare testing functor
-	//test_sort test_function;
-	test_all uber_wtf;
+	// Vector that holds all functions to be tested.
+	vector<tuple<function<void(int*)>, string>> sorting_functions;
+	sorting_functions.push_back(selection_tuple);
+	sorting_functions.push_back(insertion_tuple);
 
-	// Declare sort functors for each sorting function
-	F::selection selection;
-	F::insertion insertion;
+	test_all testall;
 
-	vector<tuple<void (F::*), string>> wtf;
-	wtf.push_back(selection, "Selection");
-	wtf.push_back(insertion, "Insertion");
-	
-	uber_wtf(wtf, testCases);
-	
-	
-	
-	/*
-	// While this code is simplified... 
-	//		It looks somewhat cryptic, doesn't it?
-	for (auto inputCase = testCases.begin(); inputCase != testCases.end(); ++inputCase)	{
-		test_function(selection_sort, "Selection", *inputCase);
-	}
+	testall(sorting_functions, testCases);
 
-	
-	std::cout << "Time tracking is done in minutes:seconds:milliseconds."
-		<< std::endl;
-	 
-	std::cout << "\nInsertion Sort:";
-	test_insertion();
-	
-	std::cout << "\n\nSelection Sort:";
-	test_selection();
-	
-	std::cout << "\n\nTemplate Selection Sort:";
-	test_template_selection();
-	
-
-	std::cout << "\n\nQuick Sort:";
-	test_quick();
-	
-	*/
 
 	return 0;
 }
