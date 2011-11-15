@@ -32,16 +32,19 @@ int main()	{
 	// Create tuples of sorting functions to be tested.
 	selection s_selection;
 	insertion s_insertion;
+	Quick s_quick(0, INPUT_SIZE-1);
+
 	tuple<function<void(int*)>, string> selection_tuple(s_selection, 
 		"Selection");
 	tuple<function<void(int*)>, string> insertion_tuple(s_insertion, 
 		"Insertion");
+	tuple<function<void(int*)>, string> quick_tuple(s_quick, "Quick Sort");
 
 	// Vector that holds all functions to be tested.
 	vector<tuple<function<void(int*)>, string>> sorting_functions;
-	sorting_functions.push_back(selection_tuple);
-	sorting_functions.push_back(insertion_tuple);
-
+	//sorting_functions.push_back(selection_tuple);
+	//sorting_functions.push_back(insertion_tuple);
+	sorting_functions.push_back(quick_tuple);
 	test_all testall;
 
 	testall(sorting_functions, testCases);

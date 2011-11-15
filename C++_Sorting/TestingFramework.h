@@ -16,7 +16,8 @@ using namespace std;
 
 // Global variables, will be used by multiple functions.
 //const int INPUT_SIZE = 20;
-const int INPUT_SIZE = 10000;
+const int INPUT_SIZE = 4150; // Semi-limit at 4159, stack overflows start to occur with greater frequency after this point.
+//const int INPUT_SIZE = 10000;
 //const int INPUT_SIZE = 100000;
 int increasing[INPUT_SIZE];
 int decreasing[INPUT_SIZE];
