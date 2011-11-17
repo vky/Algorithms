@@ -1,5 +1,6 @@
 #ifndef MY_SORTING_H
 #define MY_SORTING_H
+#include "TestingFramework.h"
 // Insertion Sort
 // Selection Sort
 // Quick Sort
@@ -34,6 +35,14 @@ void swap(T* input, int a, int b) {
 template<class T>	// Useful for testing with INPUT_SIZE = 20
 void temp_print(T input[])	{
 	for(int i = 0; i<INPUT_SIZE; i++)	{
+		std::cout << input[i] << " ";
+	}
+	std::cout << std::endl;
+}
+
+template<class T>
+void temp_print2(T input[], int end)	{
+	for(int i = 0; i<end; i++)	{
 		std::cout << input[i] << " ";
 	}
 	std::cout << std::endl;
@@ -87,13 +96,13 @@ struct selection	{
 		}
 	}
 };
-class Quick	{
+class S_Quick	{
 private:
 	int p;
 	int r;
 
 public:
-	Quick(int left, int right)	{
+	S_Quick(int left, int right)	{
 		p = left;
 		r = right;
 	}
@@ -131,4 +140,104 @@ public:
 	}
 };
 
+// I have next to no idea of to translate the sudo code into working code.
+class S_Merge{
+private:
+	int left;
+	int right;
+	// Terribly oversized arrays.
+	int L[INPUT_SIZE];
+	int R[INPUT_SIZE];
+public:
+	S_Merge(int p, int r)	{
+		left = p;
+		right = r;
+	}
+	
+	template<typename T>
+	void merge(T* input, int p, int q, int r)	{
+		cout << p << " | " << q << " | " << r << endl;
+		int n1 = 0;
+		int n2 = 0;
+
+		n1 = q - p + 1;
+		n2 = r - q;
+
+		// Set up two sub-arrays for comparison
+		for (int i = 0; i < n1; i++)	{
+			L[i] = input[p+i-1];
+		}
+		for (int j = 0; j < n2; j++)	{
+			R[j] = input[q+j];
+		}
+		// Sentinels, not really sure what good they are.
+		//L[n2] = MERGE_MAX;
+		//R[n2] = MERGE_MAX;
+
+		//print_array(input);
+		cout << n1 << " | " << n2 << endl;
+		int i = 0;
+		int j = 0;
+		for (int k = p; k <= r; k++)	{
+			if (L[i] <= R[j])	{
+				input[k] = L[i];
+				i++;
+			}
+			else	{
+				input[k] = R[j];
+				j++;
+			}
+		}
+	}
+
+	template<typename T>
+	void sort(T* input, int p, int r)	{
+		if (p < r)	{
+			int q = (p + r) / 2;
+			sort(input, p, q);
+			sort(input, q+1,r);
+			merge(input, p, q, r);
+		}
+		cout << endl;
+	}
+
+	template<typename T>
+	void operator()(T* input)	{
+		if (is_sorted_b(input))
+			return;
+
+		sort(input, left, right);
+	}
+};
+class Heap{};
+
+//template<class T>
+template<class T>
+class S_Counting{
+private:
+	T sorted[INPUT_SIZE];
+	T temp[MAX_INT+1];
+
+public:
+	//template<typename T>
+	void operator()(T* input)	{
+		for (int i = 0; i <= MAX_INT; i++)	{
+			temp[i] = 0;
+		}
+		for (int j = 0; j < INPUT_SIZE; j++)	{
+			temp[input[j]] = temp[input[j]]+1;
+		}
+		for (int i = 1; i <= MAX_INT; i++)	{
+			temp[i] = temp[i]+temp[i-1];
+		}
+		for (int j = INPUT_SIZE-1; j >= 0; j--)	{
+			sorted[temp[input[j]]-1] = input[j];
+			temp[input[j]] = temp[input[j]]-1;
+		}
+		for (int i = 0; i < INPUT_SIZE; i++)	{
+			input[i] = sorted[i];
+		}
+	}
+};
+class Radix{};
 #endif

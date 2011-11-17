@@ -4,6 +4,9 @@
 // Description: Testing insertion, selection, and quick sort performance.
 
 #include "TestingFramework.h"
+#include "my_sorting.h"
+
+typedef tuple<function<void(int*)>, string> sort_t;
 
 int main()	{
 	srand ( time(NULL) );
@@ -24,6 +27,7 @@ int main()	{
 	*/
 
 	// Create vector that holds all of the test case tuples
+
 	vector<tuple<int*, string>> testCases;
 	testCases.push_back(case_increasing);
 	testCases.push_back(case_decreasing);
@@ -32,19 +36,24 @@ int main()	{
 	// Create tuples of sorting functions to be tested.
 	selection s_selection;
 	insertion s_insertion;
-	Quick s_quick(0, INPUT_SIZE-1);
+	S_Quick s_quick(0, INPUT_SIZE-1);
+	S_Merge s_merge(0, INPUT_SIZE-1);
+	S_Counting<int> s_count;
 
-	tuple<function<void(int*)>, string> selection_tuple(s_selection, 
-		"Selection");
-	tuple<function<void(int*)>, string> insertion_tuple(s_insertion, 
-		"Insertion");
-	tuple<function<void(int*)>, string> quick_tuple(s_quick, "Quick Sort");
+	sort_t selection_tuple(s_selection, "Selection");
+	sort_t insertion_tuple(s_insertion, "Insertion");
+	sort_t quick_tuple(s_quick, "Quick Sort");
+	sort_t merge_tuple(s_merge, "Merge Sort");
+	sort_t counting_tuple(s_count, "Counting Sort");
 
 	// Vector that holds all functions to be tested.
-	vector<tuple<function<void(int*)>, string>> sorting_functions;
-	//sorting_functions.push_back(selection_tuple);
-	//sorting_functions.push_back(insertion_tuple);
+	vector<sort_t> sorting_functions;
+	sorting_functions.push_back(selection_tuple);
+	sorting_functions.push_back(insertion_tuple);
 	sorting_functions.push_back(quick_tuple);
+	//sorting_functions.push_back(merge_tuple);
+	sorting_functions.push_back(counting_tuple);
+	
 	test_all testall;
 
 	testall(sorting_functions, testCases);

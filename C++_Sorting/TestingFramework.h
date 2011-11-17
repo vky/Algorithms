@@ -11,12 +11,16 @@
 #include <algorithm>
 #include <functional>
 
-#include "my_sorting.h"
+//#include "my_sorting.h"
 using namespace std;
+
+
+const int MERGE_MAX = 99999;
+const int MAX_INT = 10000;
 
 // Global variables, will be used by multiple functions.
 //const int INPUT_SIZE = 20;
-const int INPUT_SIZE = 4150; // Semi-limit at 4159, stack overflows start to occur with greater frequency after this point.
+const int INPUT_SIZE = 3100; // Semi-limit at 4159, stack overflows start to occur with greater frequency after this point.
 //const int INPUT_SIZE = 10000;
 //const int INPUT_SIZE = 100000;
 int increasing[INPUT_SIZE];
@@ -66,7 +70,7 @@ void reset_arrays()	{
 	}
 		
 	for (int i = 0; i < INPUT_SIZE; i++)	{
-		random[i] = rand() % 10000;
+		random[i] = rand() % MAX_INT;
 	}
 }
 // Print the time taken based off of time before and after a function call.
