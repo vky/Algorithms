@@ -11,7 +11,7 @@
 // Counting Sort
 // Radix Sort
 
-template<class T>
+template<typename T>
 bool is_sorted_b(T input[])	{
 	bool sorted = true;
 
@@ -24,28 +24,12 @@ bool is_sorted_b(T input[])	{
 	
 	return sorted;
 }
-template<class T> // No bounds checking, rather dangerous.
+template<typename T> // No bounds checking, rather dangerous.
 void swap(T* input, int a, int b) {
 	T temp;
 	temp = input[a];
 	input[a] = input[b];
 	input[b] = temp;
-}
-// Helper Function
-template<class T>	// Useful for testing with INPUT_SIZE = 20
-void temp_print(T input[])	{
-	for(int i = 0; i<INPUT_SIZE; i++)	{
-		std::cout << input[i] << " ";
-	}
-	std::cout << std::endl;
-}
-
-template<class T>
-void temp_print2(T input[], int end)	{
-	for(int i = 0; i<end; i++)	{
-		std::cout << input[i] << " ";
-	}
-	std::cout << std::endl;
 }
 
 
@@ -209,9 +193,57 @@ public:
 		sort(input, left, right);
 	}
 };
-class Heap{};
+template<class T>
+class S_Heap{
+private:
+	int heap_size;
+public:
+	int parent(int i)	{
+		return i/2;
+	}
+	int left(int i)	{
+		return 2*i;
+	}
+	int right(int i)	{
+		return 2*i +1;
+	}
 
-//template<class T>
+	void max_heapify(T* input, int i)	{
+		int l = left(i);
+		int r = right(i);
+		int largest =0;
+		if (l <= heap_size && input[l] > input[i])
+			largest = l;
+		else 
+			largest = i;
+		if (r <= heap_size && input[r] > input[largest])
+			largest = r;
+		if (largest != i)	{
+			swap(input, i, largest);
+			max_heapify(input, largest);
+		}
+	}
+
+	void build_max_heap(T* input)	{
+		heap_size = INPUT_SIZE-1;
+		for (int i = (INPUT_SIZE-1)/2; i >= 0; i--)	{
+			max_heapify(input, i);
+		}
+	}
+
+	void operator()(T* input)	{
+		if (is_sorted_b(input))
+			return;
+
+		build_max_heap(input);
+		for (int i = INPUT_SIZE-1; i>=1; i--)	{
+			swap(input, 0, i);
+			heap_size = heap_size-1;
+			max_heapify(input, 0);
+		}
+	}
+};
+
 template<class T>
 class S_Counting{
 private:
@@ -239,5 +271,8 @@ public:
 		}
 	}
 };
-class Radix{};
+class Radix{
+
+
+};
 #endif

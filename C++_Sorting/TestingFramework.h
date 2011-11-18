@@ -20,8 +20,8 @@ const int MAX_INT = 10000;
 
 // Global variables, will be used by multiple functions.
 //const int INPUT_SIZE = 20;
-const int INPUT_SIZE = 3100; // Semi-limit at 4159, stack overflows start to occur with greater frequency after this point.
-//const int INPUT_SIZE = 10000;
+//const int INPUT_SIZE = 5100; // Semi-limit at 4159, stack overflows start to occur with greater frequency after this point.
+const int INPUT_SIZE = 10000;
 //const int INPUT_SIZE = 100000;
 int increasing[INPUT_SIZE];
 int decreasing[INPUT_SIZE];
