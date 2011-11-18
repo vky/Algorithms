@@ -123,76 +123,6 @@ public:
 		quick(input, p, r);
 	}
 };
-
-// I have next to no idea of to translate the sudo code into working code.
-class S_Merge{
-private:
-	int left;
-	int right;
-	// Terribly oversized arrays.
-	int L[INPUT_SIZE];
-	int R[INPUT_SIZE];
-public:
-	S_Merge(int p, int r)	{
-		left = p;
-		right = r;
-	}
-	
-	template<typename T>
-	void merge(T* input, int p, int q, int r)	{
-		cout << p << " | " << q << " | " << r << endl;
-		int n1 = 0;
-		int n2 = 0;
-
-		n1 = q - p + 1;
-		n2 = r - q;
-
-		// Set up two sub-arrays for comparison
-		for (int i = 0; i < n1; i++)	{
-			L[i] = input[p+i-1];
-		}
-		for (int j = 0; j < n2; j++)	{
-			R[j] = input[q+j];
-		}
-		// Sentinels, not really sure what good they are.
-		//L[n2] = MERGE_MAX;
-		//R[n2] = MERGE_MAX;
-
-		//print_array(input);
-		cout << n1 << " | " << n2 << endl;
-		int i = 0;
-		int j = 0;
-		for (int k = p; k <= r; k++)	{
-			if (L[i] <= R[j])	{
-				input[k] = L[i];
-				i++;
-			}
-			else	{
-				input[k] = R[j];
-				j++;
-			}
-		}
-	}
-
-	template<typename T>
-	void sort(T* input, int p, int r)	{
-		if (p < r)	{
-			int q = (p + r) / 2;
-			sort(input, p, q);
-			sort(input, q+1,r);
-			merge(input, p, q, r);
-		}
-		cout << endl;
-	}
-
-	template<typename T>
-	void operator()(T* input)	{
-		if (is_sorted_b(input))
-			return;
-
-		sort(input, left, right);
-	}
-};
 template<class T>
 class S_Heap{
 private:
@@ -243,7 +173,6 @@ public:
 		}
 	}
 };
-
 template<class T>
 class S_Counting{
 private:
@@ -271,8 +200,77 @@ public:
 		}
 	}
 };
-class Radix{
 
 
+// I have next to no idea of to translate the sudo code into working code.
+template<class T>
+class S_Merge{
+private:
+	int left;
+	int right;
+	// Terribly oversized arrays.
+	int L[INPUT_SIZE];
+	int R[INPUT_SIZE];
+public:
+	S_Merge(int p, int r)	{
+		left = p;
+		right = r;
+	}
+	
+	
+	void merge(T* input, int p, int q, int r)	{
+		cout << p << " | " << q << " | " << r << endl;
+		int n1 = 0;
+		int n2 = 0;
+
+		n1 = q - p + 1;
+		n2 = r - q;
+
+		// Set up two sub-arrays for comparison
+		for (int i = 0; i < n1; i++)	{
+			L[i] = input[p+i-1];
+		}
+		for (int j = 0; j < n2; j++)	{
+			R[j] = input[q+j];
+		}
+		// Sentinels, not really sure what good they are.
+		//L[n2] = MERGE_MAX;
+		//R[n2] = MERGE_MAX;
+
+		//print_array(input);
+		cout << n1 << " | " << n2 << endl;
+		int i = 0;
+		int j = 0;
+		for (int k = p; k <= r; k++)	{
+			if (L[i] <= R[j])	{
+				input[k] = L[i];
+				i++;
+			}
+			else	{
+				input[k] = R[j];
+				j++;
+			}
+		}
+	}
+
+	void sort(T* input, int p, int r)	{
+		if (p < r)	{
+			int q = (p + r) / 2;
+			sort(input, p, q);
+			sort(input, q+1,r);
+			merge(input, p, q, r);
+		}
+		cout << endl;
+	}
+
+	void operator()(T* input)	{
+		if (is_sorted_b(input))
+			return;
+
+		sort(input, left, right);
+	}
 };
+
+class Radix{};
+/**/
 #endif

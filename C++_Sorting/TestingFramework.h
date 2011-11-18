@@ -16,13 +16,14 @@ using namespace std;
 
 
 const int MERGE_MAX = 99999;
-const int MAX_INT = 10000;
+const int MAX_INT = 54000;
 
 // Global variables, will be used by multiple functions.
 //const int INPUT_SIZE = 20;
-//const int INPUT_SIZE = 5100; // Semi-limit at 4159, stack overflows start to occur with greater frequency after this point.
-const int INPUT_SIZE = 10000;
-//const int INPUT_SIZE = 100000;
+//const int INPUT_SIZE = 3200; // Semi-limit changes. Stack is weird.
+//const int INPUT_SIZE = 10000;
+const int INPUT_SIZE = 150000;
+
 int increasing[INPUT_SIZE];
 int decreasing[INPUT_SIZE];
 int random[INPUT_SIZE];
@@ -75,6 +76,9 @@ void reset_arrays()	{
 }
 // Print the time taken based off of time before and after a function call.
 void print_performance(std::string testTitle)	{
+	SYSTEMTIME fin_t;
+	fin_t = end_t;
+
 	printf("\nThe start time was: %02d:%04d:%04d\n", start_t.wMinute, 
 		start_t.wSecond, start_t.wMilliseconds);
 	printf("The end time was: %02d:%04d:%04d\n", end_t.wMinute, end_t.wSecond, 
@@ -82,6 +86,74 @@ void print_performance(std::string testTitle)	{
 	printf("The %s test took: %02d:%04d:%04d\n", 
 		testTitle.c_str(), end_t.wMinute - start_t.wMinute, end_t.wSecond - 
 		start_t.wSecond, end_t.wMilliseconds - start_t.wMilliseconds);
+	
+
+	if (end_t.wMinute-start_t.wMinute > 1)	{
+		if (end_t.wSecond < start_t.wSecond)	{
+			fin_t.wSecond = end_t.wSecond;
+			fin_t.wSecond += 60 - start_t.wSecond;
+			fin_t.wMinute = end_t.wMinute - start_t.wMinute - 1;
+			/**/
+			if (end_t.wSecond-start_t.wSecond > 1)	{
+				if (end_t.wMilliseconds < start_t.wMilliseconds)	{
+					fin_t.wMilliseconds = end_t.wMilliseconds;
+					fin_t.wMilliseconds += 1000 - start_t.wMilliseconds;
+					fin_t.wSecond = end_t.wSecond - start_t.wSecond - 1;
+				}
+				if (end_t.wMilliseconds >= start_t.wMilliseconds)	{
+					fin_t.wMilliseconds = end_t.wMilliseconds - start_t.wMilliseconds;
+					fin_t.wSecond = end_t.wSecond - start_t.wSecond;
+				}
+			}
+		}
+		if (end_t.wSecond >= start_t.wSecond)	{
+			fin_t.wSecond = end_t.wSecond - start_t.wSecond;
+			fin_t.wMinute = end_t.wMinute - start_t.wMinute;
+			/**/
+			if (end_t.wSecond-start_t.wSecond > 1)	{
+				if (end_t.wMilliseconds < start_t.wMilliseconds)	{
+					fin_t.wMilliseconds = end_t.wMilliseconds;
+					fin_t.wMilliseconds += 1000 - start_t.wMilliseconds;
+					fin_t.wSecond = end_t.wSecond - start_t.wSecond - 1;
+				}
+				if (end_t.wMilliseconds >= start_t.wMilliseconds)	{
+					fin_t.wMilliseconds = end_t.wMilliseconds - start_t.wMilliseconds;
+					fin_t.wSecond = end_t.wSecond - start_t.wSecond;
+				}
+			}
+		}
+	}
+
+	if (end_t.wSecond-start_t.wSecond > 1)	{
+		if (end_t.wMilliseconds < start_t.wMilliseconds)	{
+			fin_t.wMilliseconds = end_t.wMilliseconds;
+			fin_t.wMilliseconds += 1000 - start_t.wMilliseconds;
+			fin_t.wSecond = end_t.wSecond - start_t.wSecond - 1;
+		}
+		if (end_t.wMilliseconds >= start_t.wMilliseconds)	{
+			fin_t.wMilliseconds = end_t.wMilliseconds - start_t.wMilliseconds;
+			fin_t.wSecond = end_t.wSecond - start_t.wSecond;
+		}
+	}
+
+	if (end_t.wSecond-start_t.wSecond == 1)	{
+		if (end_t.wMilliseconds < start_t.wMilliseconds)	{
+			fin_t.wMilliseconds += end_t.wMilliseconds;
+			fin_t.wMilliseconds += 1000 - start_t.wMilliseconds;
+			fin_t.wSecond = 0;
+		}
+		if (end_t.wMilliseconds >= start_t.wMilliseconds)	{
+			fin_t.wMilliseconds = end_t.wMilliseconds - start_t.wMilliseconds;
+		}
+	}
+
+	if (end_t.wSecond == start_t.wSecond)	{
+		fin_t.wMilliseconds = end_t.wMilliseconds - start_t.wMilliseconds;
+	//	fin_t.wSecond = 0;
+	//	fin_t.wMilliseconds = 0;
+	}
+	cout << fin_t.wSecond << ":" << fin_t.wMilliseconds  << endl;
+	/**/
 }
 
 
