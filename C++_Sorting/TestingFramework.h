@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include <iostream>
 #include <string>
+#include <iomanip>
 
 #include <time.h>
 #include <vector>
@@ -20,9 +21,9 @@ const int MAX_INT = 54000;
 
 // Global variables, will be used by multiple functions.
 //const int INPUT_SIZE = 20;
-//const int INPUT_SIZE = 3200; // Semi-limit changes. Stack is weird.
+const int INPUT_SIZE = 3200; // Semi-limit changes. Stack is weird.
 //const int INPUT_SIZE = 50000;
-const int INPUT_SIZE = 100000;
+//const int INPUT_SIZE = 100000;
 
 int increasing[INPUT_SIZE];
 int decreasing[INPUT_SIZE];
@@ -33,26 +34,26 @@ SYSTEMTIME start_t, end_t;
 
 
 // Helper Functions
-template<class T>	// Useful for testing with INPUT_SIZE = 20
+template<typename T>	// Useful for testing with INPUT_SIZE = 20
 void print_array(T input[])	{
 	for(int i = 0; i<INPUT_SIZE; i++)	{
-		std::cout << input[i] << " ";
+		cout << input[i] << " ";
 	}
-	std::cout << std::endl;
+	cout << endl;
 }
-template<class T>
-void is_sorted(T input[], std::string sortTitle)	{
+template<typename T>
+void is_sorted(T input[])	{
 	bool sorted = true;
 	for ( int z = 0; z < INPUT_SIZE-1; z++ )	{
 		if (input[z] > input[z+1])	{
-			std::cout << sortTitle << " IS NOT sorted." << std::endl;
+			cout << setw(3) << /*sortTitle <<*/ " N ";
 			//std::cout << "Breaks down: " << z << " | " <<input[z] <<".\n" << std::endl;
 			sorted = false;
 			break;
 		}
 	}
 	if (sorted == true)	{
-		std::cout << sortTitle << " IS sorted." << std::endl;
+		cout << setw(3) << /*sortTitle <<*/ " Y ";
 		//print_array(input);
 	}
 	//else
@@ -75,13 +76,11 @@ void reset_arrays()	{
 	}
 }
 
-
 // end, start, size
 // eg. - end_second, start_second, 60 -> msd
 //		 end_millisecond, start_millisecond, 1000 -> msd
-// see timer.txt for more readable original mockup that is based 
-// off of seconds:milliseconds.
-tuple<int,int> real_time(tuple<int, int, int> sec, tuple<int, int, int> mil)	{
+// see timer.txt for the original mockup that was based off of above scenarios.
+tuple<int,int> real_time( tuple<int, int, int> sec, tuple<int, int, int> mil )	{
 	tuple<int,int> total(0,0); // sec:mil
 	
 	if (get<0>(sec) > get<1>(sec))	{
@@ -108,7 +107,7 @@ tuple<int,int> real_time(tuple<int, int, int> sec, tuple<int, int, int> mil)	{
 	
 	if (get<0>(sec) == get<1>(sec))	{
 		if (get<0>(mil) < get<1>(mil))	{
-			throw "TIME IS BROKEN; END BEFORE STARTING";
+			throw "TIME IS BROKEN; END BEFORE START!";
 		}
 		else	{
 			get<0>(total) = get<0>(sec) - get<1>(sec);
@@ -119,53 +118,7 @@ tuple<int,int> real_time(tuple<int, int, int> sec, tuple<int, int, int> mil)	{
 	return total;
 }
 // Print the time taken based off of time before and after a function call.
-void print_performance(std::string testTitle)	{
-	SYSTEMTIME fin_t;
-	fin_t = end_t;
-
-	printf("\nThe start time was: %02d:%04d:%04d\n", start_t.wMinute, 
-		start_t.wSecond, start_t.wMilliseconds);
-	printf("The end time was: %02d:%04d:%04d\n", end_t.wMinute, end_t.wSecond, 
-		end_t.wMilliseconds);
-	printf("The %s test took: %02d:%04d:%04d\n", 
-		testTitle.c_str(), end_t.wMinute - start_t.wMinute, end_t.wSecond - 
-		start_t.wSecond, end_t.wMilliseconds - start_t.wMilliseconds);
-	
-	// DONE
-	if (end_t.wSecond > start_t.wSecond)	{
-		if (end_t.wMilliseconds < start_t.wMilliseconds)	{
-			fin_t.wSecond = end_t.wSecond - start_t.wSecond - 1;
-			fin_t.wMilliseconds = end_t.wMilliseconds + (1000 - start_t.wMilliseconds);
-		}
-		else	{	//if (end_t.wMilliseconds >= start_t.wMilliseconds)	{
-			fin_t.wSecond = end_t.wSecond - start_t.wSecond;
-			fin_t.wMilliseconds = end_t.wMilliseconds - start_t.wMilliseconds;
-		}
-	}
-
-	// DONE
-	if (end_t.wSecond < start_t.wSecond)	{
-		if (end_t.wMilliseconds < start_t.wMilliseconds)	{
-			fin_t.wSecond = end_t.wSecond + (60 - start_t.wSecond) - 1;
-			fin_t.wMilliseconds = end_t.wMilliseconds + (1000 - start_t.wMilliseconds);
-		}
-		else	{	//if (end_t.wMilliseconds >= start_t.wMilliseconds)	{
-			fin_t.wSecond = end_t.wSecond + (60 - start_t.wSecond);
-			fin_t.wMilliseconds = end_t.wMilliseconds - start_t.wMilliseconds;
-		}
-	}
-
-	// DONE
-	if (end_t.wSecond == start_t.wSecond)	{
-		if (end_t.wMilliseconds < start_t.wMilliseconds)	{
-			throw "TIME IS BROKEN; END BEFORE STARTING";
-		}
-		else	{	//if (end_t.wMilliseconds >= start_t.wMilliseconds)	{
-			fin_t.wSecond = end_t.wSecond - start_t.wSecond;
-			fin_t.wMilliseconds = end_t.wMilliseconds - start_t.wMilliseconds;
-		}
-	}
-
+void print_performance()	{
 	tuple<int,int> secmil;
 	tuple<int,int> minsec;
 	secmil = real_time(make_tuple(end_t.wSecond, start_t.wSecond, 60),
@@ -174,9 +127,7 @@ void print_performance(std::string testTitle)	{
 	minsec = real_time(make_tuple(end_t.wMinute, start_t.wMinute, 60),
 						make_tuple(end_t.wSecond, start_t.wSecond, 60));
 
-	cout << fin_t.wMinute << ":" << fin_t.wSecond << ":" << fin_t.wMilliseconds  << endl;
-	cout << get<0>(minsec) << ":" << get<0>(secmil) << ":" << get<1>(secmil)  << endl;
-	
+	cout << setw(7) << get<0>(minsec) << ":" << setw(2) << get<0>(secmil) << ":" << setw(3) << get<1>(secmil);
 }
 
 
@@ -188,25 +139,32 @@ struct test_single_sort	{
 		GetLocalTime(&start_t);
 		func(get<0>(testCase));
 		GetLocalTime(&end_t);
-		string something = funcTitle +"-"+ get<1>(testCase);
-		print_performance(something);
-		is_sorted(get<0>(testCase), something);
+		print_performance();
+		is_sorted(get<0>(testCase));
 	}
 };
 struct test_all	{
 	template<class T>
 	void operator()(vector<tuple<function<void(int*)>, string>> sorts, 
 					vector<tuple<T*, string>> tests)	{
-		test_single_sort test_func;		
+		test_single_sort test_func;
+		cout << setw(16) <<" ";
+		for (auto inputCase = tests.begin(); inputCase != tests.end(); ++inputCase)	
+		{
+			cout << setw(16) << get<1>(*inputCase);
+		}
+		cout << endl;
 		// Loop through each sorting function in 'sorts' vector
 		for (auto inputFunc = sorts.begin(); inputFunc != sorts.end(); ++inputFunc)	{
 			// Reset the arrays for each function
 			reset_arrays();
+			cout << setw(16) << get<1>(*inputFunc);
 			// Loop through all the test cases in the 'tests' vector
 			for (auto inputCase = tests.begin(); inputCase != tests.end(); ++inputCase)	
 			{
 				test_func(get<0>(*inputFunc), get<1>(*inputFunc), *inputCase);
 			}
+			cout << endl;
 		}
 	}
 };

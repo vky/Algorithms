@@ -31,7 +31,7 @@ int main()	{
 
 	// Create vector that holds all of the test case tuples
 	vector<tuple<int*, string>> testCases;
-	//testCases.push_back(case_increasing);
+	testCases.push_back(case_increasing);
 	testCases.push_back(case_decreasing);
 	testCases.push_back(case_random);
 
@@ -39,9 +39,9 @@ int main()	{
 	insertion s_insertion;
 	selection s_selection;
 	//S_Merge s_merge(0, INPUT_SIZE-1);
-	//S_Heap<int> s_heap;
-	//S_Counting<int> s_count;
-	//S_Quick s_quick(0, INPUT_SIZE-1);
+	S_Heap<int> s_heap;
+	S_Counting<int> s_count;
+	S_Quick s_quick(0, INPUT_SIZE-1);
 	
 	
 
@@ -49,9 +49,9 @@ int main()	{
 	sort_t insertion_tuple(s_insertion, "Insertion");	
 	sort_t selection_tuple(s_selection, "Selection");
 	//sort_t merge_tuple(s_merge, "Merge Sort");
-	//sort_t heap_tuple(s_heap, "Heapsort");
-	//sort_t counting_tuple(s_count, "Counting Sort");
-	//sort_t quick_tuple(s_quick, "Quick Sort");
+	sort_t heap_tuple(s_heap, "Heapsort");
+	sort_t counting_tuple(s_count, "Counting Sort");
+	sort_t quick_tuple(s_quick, "Quick Sort");
 	
 
 	// Vector that holds all functions to be tested.
@@ -59,9 +59,9 @@ int main()	{
 	sorting_functions.push_back(insertion_tuple);
 	sorting_functions.push_back(selection_tuple);
 	//sorting_functions.push_back(merge_tuple);
-	//sorting_functions.push_back(heap_tuple);
-	//sorting_functions.push_back(counting_tuple);
-	//sorting_functions.push_back(quick_tuple);
+	sorting_functions.push_back(heap_tuple);
+	sorting_functions.push_back(counting_tuple);
+	sorting_functions.push_back(quick_tuple);
 	
 	
 
