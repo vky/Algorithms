@@ -21,8 +21,8 @@ const int MAX_INT = 54000;
 // Global variables, will be used by multiple functions.
 //const int INPUT_SIZE = 20;
 //const int INPUT_SIZE = 3200; // Semi-limit changes. Stack is weird.
-//const int INPUT_SIZE = 10000;
-const int INPUT_SIZE = 150000;
+//const int INPUT_SIZE = 50000;
+const int INPUT_SIZE = 100000;
 
 int increasing[INPUT_SIZE];
 int decreasing[INPUT_SIZE];
@@ -74,6 +74,50 @@ void reset_arrays()	{
 		random[i] = rand() % MAX_INT;
 	}
 }
+
+
+// end, start, size
+// eg. - end_second, start_second, 60 -> msd
+//		 end_millisecond, start_millisecond, 1000 -> msd
+// see timer.txt for more readable original mockup that is based 
+// off of seconds:milliseconds.
+tuple<int,int> real_time(tuple<int, int, int> sec, tuple<int, int, int> mil)	{
+	tuple<int,int> total(0,0); // sec:mil
+	
+	if (get<0>(sec) > get<1>(sec))	{
+		if (get<0>(mil) < get<1>(mil))	{
+			get<0>(total) = get<0>(sec) - get<1>(sec) - 1;
+			get<1>(total) = get<0>(mil) + (get<2>(mil) - get<1>(mil));
+		}
+		else	{
+			get<0>(total) = get<0>(sec) - get<1>(sec);
+			get<1>(total) = get<0>(mil) - get<1>(mil);
+		}
+	}
+
+	if (get<0>(sec) < get<1>(sec))	{
+		if (get<0>(mil) < get<1>(mil))	{
+			get<0>(total) = get<0>(sec) + (get<2>(sec) - get<1>(sec)) - 1;
+			get<1>(total) = get<0>(mil) + (get<2>(mil) - get<1>(mil));
+		}
+		else	{
+			get<0>(total) = get<0>(sec) + (get<2>(sec) - get<1>(sec));
+			get<1>(total) = get<0>(mil) - get<1>(mil);
+		}
+	}
+	
+	if (get<0>(sec) == get<1>(sec))	{
+		if (get<0>(mil) < get<1>(mil))	{
+			throw "TIME IS BROKEN; END BEFORE STARTING";
+		}
+		else	{
+			get<0>(total) = get<0>(sec) - get<1>(sec);
+			get<1>(total) = get<0>(mil) - get<1>(mil);
+		}
+	}
+
+	return total;
+}
 // Print the time taken based off of time before and after a function call.
 void print_performance(std::string testTitle)	{
 	SYSTEMTIME fin_t;
@@ -87,73 +131,52 @@ void print_performance(std::string testTitle)	{
 		testTitle.c_str(), end_t.wMinute - start_t.wMinute, end_t.wSecond - 
 		start_t.wSecond, end_t.wMilliseconds - start_t.wMilliseconds);
 	
-
-	if (end_t.wMinute-start_t.wMinute > 1)	{
-		if (end_t.wSecond < start_t.wSecond)	{
-			fin_t.wSecond = end_t.wSecond;
-			fin_t.wSecond += 60 - start_t.wSecond;
-			fin_t.wMinute = end_t.wMinute - start_t.wMinute - 1;
-			/**/
-			if (end_t.wSecond-start_t.wSecond > 1)	{
-				if (end_t.wMilliseconds < start_t.wMilliseconds)	{
-					fin_t.wMilliseconds = end_t.wMilliseconds;
-					fin_t.wMilliseconds += 1000 - start_t.wMilliseconds;
-					fin_t.wSecond = end_t.wSecond - start_t.wSecond - 1;
-				}
-				if (end_t.wMilliseconds >= start_t.wMilliseconds)	{
-					fin_t.wMilliseconds = end_t.wMilliseconds - start_t.wMilliseconds;
-					fin_t.wSecond = end_t.wSecond - start_t.wSecond;
-				}
-			}
-		}
-		if (end_t.wSecond >= start_t.wSecond)	{
-			fin_t.wSecond = end_t.wSecond - start_t.wSecond;
-			fin_t.wMinute = end_t.wMinute - start_t.wMinute;
-			/**/
-			if (end_t.wSecond-start_t.wSecond > 1)	{
-				if (end_t.wMilliseconds < start_t.wMilliseconds)	{
-					fin_t.wMilliseconds = end_t.wMilliseconds;
-					fin_t.wMilliseconds += 1000 - start_t.wMilliseconds;
-					fin_t.wSecond = end_t.wSecond - start_t.wSecond - 1;
-				}
-				if (end_t.wMilliseconds >= start_t.wMilliseconds)	{
-					fin_t.wMilliseconds = end_t.wMilliseconds - start_t.wMilliseconds;
-					fin_t.wSecond = end_t.wSecond - start_t.wSecond;
-				}
-			}
-		}
-	}
-
-	if (end_t.wSecond-start_t.wSecond > 1)	{
+	// DONE
+	if (end_t.wSecond > start_t.wSecond)	{
 		if (end_t.wMilliseconds < start_t.wMilliseconds)	{
-			fin_t.wMilliseconds = end_t.wMilliseconds;
-			fin_t.wMilliseconds += 1000 - start_t.wMilliseconds;
 			fin_t.wSecond = end_t.wSecond - start_t.wSecond - 1;
+			fin_t.wMilliseconds = end_t.wMilliseconds + (1000 - start_t.wMilliseconds);
 		}
-		if (end_t.wMilliseconds >= start_t.wMilliseconds)	{
-			fin_t.wMilliseconds = end_t.wMilliseconds - start_t.wMilliseconds;
+		else	{	//if (end_t.wMilliseconds >= start_t.wMilliseconds)	{
 			fin_t.wSecond = end_t.wSecond - start_t.wSecond;
-		}
-	}
-
-	if (end_t.wSecond-start_t.wSecond == 1)	{
-		if (end_t.wMilliseconds < start_t.wMilliseconds)	{
-			fin_t.wMilliseconds += end_t.wMilliseconds;
-			fin_t.wMilliseconds += 1000 - start_t.wMilliseconds;
-			fin_t.wSecond = 0;
-		}
-		if (end_t.wMilliseconds >= start_t.wMilliseconds)	{
 			fin_t.wMilliseconds = end_t.wMilliseconds - start_t.wMilliseconds;
 		}
 	}
 
-	if (end_t.wSecond == start_t.wSecond)	{
-		fin_t.wMilliseconds = end_t.wMilliseconds - start_t.wMilliseconds;
-	//	fin_t.wSecond = 0;
-	//	fin_t.wMilliseconds = 0;
+	// DONE
+	if (end_t.wSecond < start_t.wSecond)	{
+		if (end_t.wMilliseconds < start_t.wMilliseconds)	{
+			fin_t.wSecond = end_t.wSecond + (60 - start_t.wSecond) - 1;
+			fin_t.wMilliseconds = end_t.wMilliseconds + (1000 - start_t.wMilliseconds);
+		}
+		else	{	//if (end_t.wMilliseconds >= start_t.wMilliseconds)	{
+			fin_t.wSecond = end_t.wSecond + (60 - start_t.wSecond);
+			fin_t.wMilliseconds = end_t.wMilliseconds - start_t.wMilliseconds;
+		}
 	}
-	cout << fin_t.wSecond << ":" << fin_t.wMilliseconds  << endl;
-	/**/
+
+	// DONE
+	if (end_t.wSecond == start_t.wSecond)	{
+		if (end_t.wMilliseconds < start_t.wMilliseconds)	{
+			throw "TIME IS BROKEN; END BEFORE STARTING";
+		}
+		else	{	//if (end_t.wMilliseconds >= start_t.wMilliseconds)	{
+			fin_t.wSecond = end_t.wSecond - start_t.wSecond;
+			fin_t.wMilliseconds = end_t.wMilliseconds - start_t.wMilliseconds;
+		}
+	}
+
+	tuple<int,int> secmil;
+	tuple<int,int> minsec;
+	secmil = real_time(make_tuple(end_t.wSecond, start_t.wSecond, 60),
+						make_tuple(end_t.wMilliseconds, start_t.wMilliseconds,
+						1000));
+	minsec = real_time(make_tuple(end_t.wMinute, start_t.wMinute, 60),
+						make_tuple(end_t.wSecond, start_t.wSecond, 60));
+
+	cout << fin_t.wMinute << ":" << fin_t.wSecond << ":" << fin_t.wMilliseconds  << endl;
+	cout << get<0>(minsec) << ":" << get<0>(secmil) << ":" << get<1>(secmil)  << endl;
+	
 }
 
 

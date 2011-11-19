@@ -31,7 +31,7 @@ int main()	{
 
 	// Create vector that holds all of the test case tuples
 	vector<tuple<int*, string>> testCases;
-	testCases.push_back(case_increasing);
+	//testCases.push_back(case_increasing);
 	testCases.push_back(case_decreasing);
 	testCases.push_back(case_random);
 

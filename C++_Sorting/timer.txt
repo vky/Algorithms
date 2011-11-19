@@ -1,0 +1,40 @@
+	
+	if (end_t.wSecond > start_t.wSecond)	{
+		if (end_t.wMilliseconds < start_t.wMilliseconds)	{
+			fin_t.wSecond = end_t.wSecond - start_t.wSecond - 1;
+			fin_t.wMilliseconds = end_t.wMilliseconds + (1000 - start_t.wMilliseconds);
+		}
+		else	{	//if (end_t.wMilliseconds >= start_t.wMilliseconds)	{
+			fin_t.wSecond = end_t.wSecond - start_t.wSecond;
+			fin_t.wMilliseconds = end_t.wMilliseconds - start_t.wMilliseconds;
+		}
+	}
+
+	
+	if (end_t.wSecond < start_t.wSecond)	{
+		if (end_t.wMilliseconds < start_t.wMilliseconds)	{
+			fin_t.wSecond = end_t.wSecond + (60 - start_t.wSecond) - 1;
+			fin_t.wMilliseconds = end_t.wMilliseconds + (1000 - start_t.wMilliseconds);
+		}
+		else	{	//if (end_t.wMilliseconds >= start_t.wMilliseconds)	{
+			fin_t.wSecond = end_t.wSecond + (60 - start_t.wSecond);
+			fin_t.wMilliseconds = end_t.wMilliseconds - start_t.wMilliseconds;
+		}
+	}
+
+	
+	if (end_t.wSecond == start_t.wSecond)	{
+		if (end_t.wMilliseconds < start_t.wMilliseconds)	{
+			throw "TIME IS BROKEN; END BEFORE STARTING";
+		}
+		else	{	//if (end_t.wMilliseconds >= start_t.wMilliseconds)	{
+			fin_t.wSecond = end_t.wSecond - start_t.wSecond;
+			fin_t.wMilliseconds = end_t.wMilliseconds - start_t.wMilliseconds;
+		}
+	}
+
+
+	Those were the 3 cases, and their subcases, that I found necessary deal with to accurately determine total time passed. 
+	This can then be generalized for any set of time periods, provided that the time records do not exceed their time size
+	(if time type is hours, hours should not go past 23 or 12, depending on style used; or if minutes or hours, it should not
+	go over 59).
