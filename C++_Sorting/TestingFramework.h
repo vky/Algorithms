@@ -12,18 +12,15 @@
 #include <algorithm>
 #include <functional>
 
-//#include "my_sorting.h"
 using namespace std;
 
 
-const int MERGE_MAX = 99999;
-const int MAX_INT = 54000;
+//const int MERGE_MAX = 51000;
+const int MAX_INT = 100000;
 
 // Global variables, will be used by multiple functions.
-//const int INPUT_SIZE = 20;
-const int INPUT_SIZE = 3200; // Semi-limit changes. Stack is weird.
-//const int INPUT_SIZE = 50000;
-//const int INPUT_SIZE = 100000;
+//const int INPUT_SIZE = 20;		// For verification.
+const int INPUT_SIZE = 100000;
 
 int increasing[INPUT_SIZE];
 int decreasing[INPUT_SIZE];
@@ -135,7 +132,7 @@ void print_performance()	{
 // take an array as input.
 struct test_single_sort	{
 	template<class S, class T>
-	void operator()(S func, string funcTitle, tuple<T*, string> testCase)	{
+	void operator()(S func, tuple<T*, string> testCase)	{
 		GetLocalTime(&start_t);
 		func(get<0>(testCase));
 		GetLocalTime(&end_t);
@@ -162,7 +159,7 @@ struct test_all	{
 			// Loop through all the test cases in the 'tests' vector
 			for (auto inputCase = tests.begin(); inputCase != tests.end(); ++inputCase)	
 			{
-				test_func(get<0>(*inputFunc), get<1>(*inputFunc), *inputCase);
+				test_func(get<0>(*inputFunc), *inputCase);
 			}
 			cout << endl;
 		}

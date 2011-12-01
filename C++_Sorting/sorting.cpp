@@ -3,8 +3,10 @@
 // Title: Sorting.cpp
 // Description: Testing insertion, selection, and quick sort performance.
 
-//#include "TestingFramework.h"
+#include "TestingFramework.h"
 #include "my_sorting.h"
+
+#include "template_sorting.h"
 
 // type definition of sorting function tuple to keep the block of function 
 // tuple instantiations cleaner.
@@ -38,7 +40,7 @@ int main()	{
 	// Instantiate sorting functions
 	insertion s_insertion;
 	selection s_selection;
-	//S_Merge s_merge(0, INPUT_SIZE-1);
+//	S_Merge<int> s_merge(1, INPUT_SIZE+1);
 	S_Heap<int> s_heap;
 	S_Counting<int> s_count;
 	S_Quick s_quick(0, INPUT_SIZE-1);
@@ -48,7 +50,7 @@ int main()	{
 	// Create 2-type tuples of sorting functions, function & function's title.
 	sort_t insertion_tuple(s_insertion, "Insertion");	
 	sort_t selection_tuple(s_selection, "Selection");
-	//sort_t merge_tuple(s_merge, "Merge Sort");
+//	sort_t merge_tuple(s_merge, "Merge Sort");
 	sort_t heap_tuple(s_heap, "Heapsort");
 	sort_t counting_tuple(s_count, "Counting Sort");
 	sort_t quick_tuple(s_quick, "Quick Sort");
@@ -58,7 +60,7 @@ int main()	{
 	vector<sort_t> sorting_functions;
 	sorting_functions.push_back(insertion_tuple);
 	sorting_functions.push_back(selection_tuple);
-	//sorting_functions.push_back(merge_tuple);
+//	sorting_functions.push_back(merge_tuple);
 	sorting_functions.push_back(heap_tuple);
 	sorting_functions.push_back(counting_tuple);
 	sorting_functions.push_back(quick_tuple);
@@ -67,9 +69,15 @@ int main()	{
 
 	// Instantiate testing functor.
 	test_all testall;
+	
 	// Test.
+	cout << "Test case size is: " << INPUT_SIZE << endl;
+	cout << "Largest random integer is: " << MAX_INT-1 << endl;
+	cout << "Time format is minutes:seconds:milliseconds." << endl;
+	cout << "Next to the time taken is a Y or N for whether the input has been sorted.\n\n";
 	testall(sorting_functions, testCases);
 
-
+	system("pause");
 	return 0;
 }
+

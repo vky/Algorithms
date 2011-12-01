@@ -4,11 +4,10 @@
 // Insertion Sort
 // Selection Sort
 // Quick Sort
-
-
-// Merge Sort
 // Heap Sort
 // Counting Sort
+
+// Merge Sort
 // Radix Sort
 
 template<typename T>
@@ -31,13 +30,20 @@ void swap(T* input, int a, int b) {
 	input[a] = input[b];
 	input[b] = temp;
 }
-
+int exp(int d, int n)	{
+	int t = 1;
+	for (int i = n; i >= 1; i--)	{
+		t*=d;
+	}
+	return t;
+}
+int digit(int a, int d)	{
+	return (a%(exp(10,d)) - a%(exp(10,d-1))) / exp(10,d-1);
+}
 
 // Sorting methods
 
-// Will want to rewrite insertion and selection structs as classes that take
-// min/max initializer values like Quick Sort, rather than depending on 
-// compiler magic for max with INPUT_SIZE global constant.
+
 struct insertion	{
 	template<class T>
 	void operator()(T* input){
@@ -178,23 +184,26 @@ class S_Counting{
 private:
 	T sorted[INPUT_SIZE];
 	T temp[MAX_INT+1];
-
+	//int sorted[100001];
+	//int temp[100001];
 public:
-	//template<typename T>
 	void operator()(T* input)	{
 		for (int i = 0; i <= MAX_INT; i++)	{
 			temp[i] = 0;
 		}
 		for (int j = 0; j < INPUT_SIZE; j++)	{
-			temp[input[j]] = temp[input[j]]+1;
+			temp[input[j]]++;
 		}
 		for (int i = 1; i <= MAX_INT; i++)	{
-			temp[i] = temp[i]+temp[i-1];
+			temp[i] += temp[i-1];
 		}
 		for (int j = INPUT_SIZE-1; j >= 0; j--)	{
 			sorted[temp[input[j]]-1] = input[j];
 			temp[input[j]] = temp[input[j]]-1;
 		}
+		// Extra for loop to copy the sorted array back to the input array.
+		// Testing function will not work if this function were to return
+		// a new array.
 		for (int i = 0; i < INPUT_SIZE; i++)	{
 			input[i] = sorted[i];
 		}
@@ -202,13 +211,13 @@ public:
 };
 
 
-// I have next to no idea of to translate the sudo code into working code.
+// Pseudo-code provided by book, not fixed.
 template<class T>
 class S_Merge{
 private:
 	int left;
 	int right;
-	// Terribly oversized arrays.
+	// Oversized arrays.
 	int L[INPUT_SIZE];
 	int R[INPUT_SIZE];
 public:
@@ -233,12 +242,12 @@ public:
 		for (int j = 0; j < n2; j++)	{
 			R[j] = input[q+j];
 		}
-		// Sentinels, not really sure what good they are.
+		// Sentinels, not really sure how these should be implmented.
 		//L[n2] = MERGE_MAX;
 		//R[n2] = MERGE_MAX;
 
 		//print_array(input);
-		cout << n1 << " | " << n2 << endl;
+		//cout << n1 << " | " << n2 << endl;
 		int i = 0;
 		int j = 0;
 		for (int k = p; k <= r; k++)	{
@@ -260,7 +269,6 @@ public:
 			sort(input, q+1,r);
 			merge(input, p, q, r);
 		}
-		cout << endl;
 	}
 
 	void operator()(T* input)	{
@@ -271,6 +279,8 @@ public:
 	}
 };
 
-class Radix{};
+class Radix{
+
+};
 /**/
 #endif

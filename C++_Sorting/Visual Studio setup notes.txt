@@ -1,0 +1,8 @@
+Build -> Configuration Manager -> Active Solution Configuration: -> <New> -> 
+	Name: _anything_ | Copy Settings From: <Empty>
+
+Project -> _project_name_ Properties -> Linker -> System -> Stack Reserve Size -> 8000000 (Apply -> OK)
+Also changed in Properties
+	-> C/C++ -> Optimization -> Optimization -> Full Optimization
+	-> C/C++ -> Optimization -> Whole Program Optimization -> Yes
+Not sure if those were necessary.
